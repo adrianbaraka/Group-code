@@ -7,6 +7,7 @@ int step = 1;
 int divisions = 10;
 int begin_at = -2;
 char extend = 't';
+int extendlist[] = {10, 26};
 
 //Define Points
 vector<float> points = {
@@ -96,19 +97,29 @@ vector<float> bestfit(const vector<float>& points){
         newpoints.push_back(new_y);
     }
     if (extend == 't'){
-        //extend the line
-        int x1 = 10;
-        float new_x1 = (x1 - 10) / 2;
-        float new_y1 = (((gradient * x1) + y_intercept)) / 100;
-        newpoints.push_back(new_x1);
-        newpoints.push_back(new_y1);
-
-        int x2 = 26;
-        float new_x2 = (x2 - 10) / 2;
-        float new_y2 = (((gradient * x2) + y_intercept)) / 100;
-        newpoints.push_back(new_x2);
-        newpoints.push_back(new_y2);
+        for (size_t i = 0; i < sizeof(extendlist) / sizeof(extendlist[0]); i++){
+            //extend the line
+            int x1 = extendlist[i];
+            float new_x1 = (x1 - 10) / 2;
+            float new_y1 = (((gradient * x1) + y_intercept)) / 100;
+            newpoints.push_back(new_x1);
+            newpoints.push_back(new_y1);
+        }
     }
+
+        //extend the line
+    //     int x1 = 10;
+    //     float new_x1 = (x1 - 10) / 2;
+    //     float new_y1 = (((gradient * x1) + y_intercept)) / 100;
+    //     newpoints.push_back(new_x1);
+    //     newpoints.push_back(new_y1);
+
+    //     int x2 = 26;
+    //     float new_x2 = (x2 - 10) / 2;
+    //     float new_y2 = (((gradient * x2) + y_intercept)) / 100;
+    //     newpoints.push_back(new_x2);
+    //     newpoints.push_back(new_y2);
+    // }
 
 
     return newpoints;
@@ -155,18 +166,19 @@ void draw_labels() {
     glColor3f(0.0f, 0.0f, 0.0f); // Black color for labels
 
     // X-axis
-    for (int i = 0; i <= 11; i += step) {
+    for (int i = 0; i < divisions; i += step) {
         draw_text(i, -0.5f, to_string(10 + (2 * i)));
     }
 
     // Y-axis labels (0 to 10, multiplied by 100)
-    for (int i = 0; i <= 11; i += step) {
+    for (int i = 0; i < divisions; i += step) {
         draw_text(-0.7f, i, "$" + to_string(i * 100)); // Dollar sign and multiplied value
     }
 
     // Add axis names
-    draw_text_label(4, -1.0f, "Temperature °C"); // X-axis name
-    draw_text_label(-1.5f, 5, "Sales"); // Y-axis name
+    // x position / 2 so that it is always centered same for the y axis
+    draw_text_label((divisions / 2) - 1, -1.0f, "Temperature °C"); // X-axis name
+    draw_text_label(-1.5f, (divisions / 2), "Sales"); // Y-axis name
 }
 
 //draws a line given a set of points

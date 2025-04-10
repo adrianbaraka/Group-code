@@ -2,14 +2,11 @@ from OpenGL.GLUT import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-import ctypes
-# GLUT_BITMAP_TIMES_ROMAN_24 = ctypes.c_void_p(5)
-# GLUT_BITMAP_HELVETICA_18 = ctypes.c_void_p(6)
-
 step = 1
 divisions = 10
 begin_at = -2
 extend = True
+extendlist = [10, 26]
 
 #Define Points
 points = [14.2, 215,
@@ -36,7 +33,7 @@ def plot_point(x, y):
 #returns a new list of points for the best fit line
 def bestfit(points):
     #Uses the least squares regression method
-    #formula is gradient = (N Σ(xy) − Σx Σy) / (N Σ(x^2) − (Σx)^2)
+    #formula is: gradient = (N Σ(xy) − Σx Σy) / (N Σ(x^2) − (Σx)^2)
     #y-intecept =  Σy − m Σx/  N
 
     n = len(points) / 2
@@ -64,25 +61,18 @@ def bestfit(points):
         newpoints.append(new_y)
 
     if extend:
-        #extend the line
-        x1 = 10
-        new_x1 = (x1 - 10) / 2
-        new_y1 = (((gradient * x1) + y_intercept)) / 100
-        newpoints.append(new_x1)
-        newpoints.append(new_y1)
-
-        x2 = 26
-        new_x2 = (x2 - 10) / 2
-        new_y2 = (((gradient * x2) + y_intercept)) / 100
-        newpoints.append(new_x2)
-        newpoints.append(new_y2)
+        for x in extendlist:
+            new_x1 = (x - 10) / 2
+            new_y1 = (((gradient * x) + y_intercept)) / 100
+            newpoints.append(new_x1)
+            newpoints.append(new_y1)
 
     return newpoints
 
 def init():
     glClearColor(1.0, 1.0, 1.0, 1.0) #background colour
     glColor3f(0.0, 0.0, 1.0) #Point color
-    glPointSize(6.0) #Point size
+    glPointSize(7.0) #Point size
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     gluOrtho2D(begin_at, divisions, begin_at, divisions)
@@ -113,20 +103,19 @@ def draw_labels():
     glColor3f(0.0, 0.0, 0.0) # Black color for labels
 
     #X-axis
-    for i in range(0, 11, step):
+    for i in range(0, divisions, step):
         draw_text(i, -0.5, str(10 + (2 * i)))
 
     #Y-axis labels (0 to 10, multiplied by 100)
-    for i in range(0, 11, step):
-        draw_text(-0.7, i, str(f"${(i * 100)}")) #// Dollar sign and multiplied value
+    for i in range(0, divisions, step):
+        draw_text(-0.7, i, str(f"${(i * 100)}")) # Dollar sign and multiplied value
 
     #Add axis names
-    draw_text_label(4, -1.0, str("Temperature °C")) #X-axis name
-    draw_text_label(-1.5, 5, str("Sales")) # Y-axis name
+    # x position / 2 so that it is always centered same for the y axis
+    draw_text_label((divisions / 2) -1, -1.0, str("Temperature °C")) #X-axis name
+    draw_text_label(-1.5, ((divisions / 2)), str("Sales")) # Y-axis name
 
 #draws a line given a set of points
-from OpenGL.GL import *
-
 def drawLineStrip(points):
     if len(points) < 2:  # Need at least two points
         return

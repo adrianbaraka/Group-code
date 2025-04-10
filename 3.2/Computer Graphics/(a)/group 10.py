@@ -61,9 +61,7 @@ def apply_color_lut(image_path, lut_path, output_path):
     output_img.save(output_path)
     return output_img
 
-# Example usage
 def main():
-    # Example file paths (you'd replace these with actual paths)
     input_image = "input.jpg"
     lut_image = "trial1.png"  # Should be a 512x512 LUT texture
     output_image = "output.png"
